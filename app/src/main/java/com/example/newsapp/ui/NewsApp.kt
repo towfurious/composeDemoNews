@@ -22,7 +22,8 @@ fun Navigation() {
     val rememberScrollState = rememberScrollState()
     NavHost(navController = navController, startDestination = "topNews") {
         composable("TopNews") { TopNews(navController) }
-        composable("DetailScreen/{newsId}",
+        composable(
+            "DetailScreen/{newsId}",
             arguments = listOf(navArgument("newsId") {
                 type = NavType.IntType
             })
@@ -30,6 +31,7 @@ fun Navigation() {
         {
             val id = it.arguments?.getInt("newsId")
             val newsData = MockData.getNews(id)
-            DetailScreen(newsData, scrollState = rememberScrollState ) }
+            DetailScreen(newsData, scrollState = rememberScrollState, navController)
+        }
     }
 }

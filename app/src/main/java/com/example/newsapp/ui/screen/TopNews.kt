@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.newsapp.data.MockData
+import com.example.newsapp.data.MockData.getTimeAgo
 import com.example.newsapp.model.NewsData
 
 @Composable
@@ -36,10 +36,15 @@ fun TopNews(navController: NavController) {
      This snippet applies the safeDrawing window
      insets as padding around the entire content of the app.
      While this ensures that interactable elements don't overlap with the system UI */
-    Column(modifier = Modifier.fillMaxWidth().systemBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .systemBarsPadding(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Text(text = "Top News", fontWeight = FontWeight.SemiBold)
         LazyColumn {
-            items(MockData.topNewsList) {newsData ->
+            items(MockData.topNewsList) { newsData ->
                 TopNewsItem(newsData = newsData, onNewsClick = {
                     navController.navigate("DetailScreen/${newsData.id}")
                 })
@@ -59,7 +64,8 @@ fun TopNewsPreview() {
 fun TopNewsItem(newsData: NewsData, onNewsClick: () -> Unit = {}) {
     Box(modifier = Modifier
         .height(200.dp)
-        .padding(8.dp).clickable {
+        .padding(8.dp)
+        .clickable {
             onNewsClick()
         }) {
         Image(
@@ -72,11 +78,17 @@ fun TopNewsItem(newsData: NewsData, onNewsClick: () -> Unit = {}) {
                 .padding(top = 16.dp, start = 16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = newsData.publishedAt, color = Color.White,
-                fontWeight = FontWeight.SemiBold)
+            val date: String = MockData.stringToDate(newsData.publishedAt).getTimeAgo()
+            Text(
+                text = date,
+                color = Color.White,
+                fontWeight = FontWeight.SemiBold
+            )
             Spacer(modifier = Modifier.height(80.dp))
-            Text(text = newsData.title, color = Color.White,
-                fontWeight = FontWeight.Normal, maxLines = 2)
+            Text(
+                text = newsData.title, color = Color.White,
+                fontWeight = FontWeight.Normal, maxLines = 2
+            )
         }
     }
 }
