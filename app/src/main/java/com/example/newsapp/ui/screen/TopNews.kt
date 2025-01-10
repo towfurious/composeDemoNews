@@ -53,7 +53,6 @@ fun TopNews(navController: NavController) {
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun TopNewsPreview() {
