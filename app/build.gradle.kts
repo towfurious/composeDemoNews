@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
