@@ -40,6 +40,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.landscapist.coil)
+    implementation(libs.converter.moshi)
+    implementation(libs.moshi.kotlin)
     implementation(libs.retrofit)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
