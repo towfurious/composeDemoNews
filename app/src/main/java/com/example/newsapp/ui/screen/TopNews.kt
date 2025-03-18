@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -37,8 +36,7 @@ fun TopNews(navController: NavController, articles: List<TopNewsArticle>) {
      While this ensures that interactable elements don't overlap with the system UI */
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .systemBarsPadding(),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Top News", fontWeight = FontWeight.SemiBold)
