@@ -40,6 +40,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.logging.interceptor)
     implementation(libs.landscapist.coil)
     implementation(libs.converter.moshi)
     implementation(libs.moshi.kotlin)

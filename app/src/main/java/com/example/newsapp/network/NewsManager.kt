@@ -35,45 +35,51 @@ class NewsManager {
         getArticles()
     }
 
-    private fun getArticles(){
+    private fun getArticles() {
         val service = Api.retrofitService.getTopArticles(
             country = "us",
-            language = "en",
-            apiKey = Api.API_KEY)
+            language = "en"
+        )
         service.enqueue(object : Callback<TopNewsResponse> {
-            override fun onResponse(call: Call<TopNewsResponse>, response: Response<TopNewsResponse>) {
-                if (response.isSuccessful){
+            override fun onResponse(
+                call: Call<TopNewsResponse>,
+                response: Response<TopNewsResponse>
+            ) {
+                if (response.isSuccessful) {
                     _newsResponse.value = response.body()!!
-                    Log.d("news","${_newsResponse.value}")
-                }else{
-                    Log.d("error","Error with code ${response.code()}")
+                    Log.d("news", "${_newsResponse.value}")
+                } else {
+                    Log.d("error", "Error with code ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<TopNewsResponse>, t: Throwable) {
-                Log.d("error","${t.printStackTrace()}")
+                Log.d("error", "${t.printStackTrace()}")
             }
 
         })
     }
 
-   fun getArticlesByCategory(category: String) {
+    fun getArticlesByCategory(category: String) {
         val service = Api.retrofitService.getArticlesByCategory(
             category = category,
-            language = "en",
-            apiKey = Api.API_KEY)
+            language = "en"
+        )
         service.enqueue(object : Callback<TopNewsResponse> {
-            override fun onResponse(call: Call<TopNewsResponse>, response: Response<TopNewsResponse>) {
-                if (response.isSuccessful){
+            override fun onResponse(
+                call: Call<TopNewsResponse>,
+                response: Response<TopNewsResponse>
+            ) {
+                if (response.isSuccessful) {
                     _getArticleByCategory.value = response.body()!!
-                    Log.d("category","${_getArticleByCategory.value}")
-                }else{
-                    Log.d("error","Error with code ${response.code()}")
+                    Log.d("category", "${_getArticleByCategory.value}")
+                } else {
+                    Log.d("error", "Error with code ${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<TopNewsResponse>, t: Throwable) {
-                Log.d("error","${t.printStackTrace()}")
+                Log.d("error", "${t.printStackTrace()}")
             }
 
         })
