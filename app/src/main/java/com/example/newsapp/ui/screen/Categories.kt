@@ -78,7 +78,7 @@ fun ArticleContent(articles: List<TopNewsArticle>, modifier: Modifier = Modifier
     LazyColumn {
         items(articles) {
             article ->
-            Card(modifier.padding(8.dp), border = BorderStroke(2.dp, color = colorResource(id = R.color.purple_500)))
+            Card(modifier.padding(8.dp), border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.primary))
             {
                 Row(modifier
                     .fillMaxWidth()

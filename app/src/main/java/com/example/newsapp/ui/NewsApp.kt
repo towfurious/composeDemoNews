@@ -34,9 +34,15 @@ fun NewsApp() {
 
 @Composable
 fun MainScreen(navController: NavHostController, scrollState: ScrollState) {
-    Scaffold(bottomBar = { BottomMenu(navController) }, content = { paddingValues ->
-        Navigation(navController, scrollState = scrollState, paddingValues = paddingValues)
-    })
+    Scaffold(
+        bottomBar = { BottomMenu(navController) },
+        content = { paddingValues ->
+            Navigation(
+                navController,
+                scrollState = scrollState,
+                paddingValues = paddingValues
+            )
+        })
 }
 
 @Composable
@@ -61,7 +67,7 @@ fun Navigation(
                     type = NavType.IntType
                 })
             )
-            {   navBackStackEntry ->
+            { navBackStackEntry ->
                 val index = navBackStackEntry.arguments?.getInt("index")
                 index?.let {
                     val acticle = articles[index]

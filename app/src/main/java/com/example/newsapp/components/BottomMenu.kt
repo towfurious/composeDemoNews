@@ -1,8 +1,11 @@
 package com.example.newsapp.components
 
+import android.content.res.Resources.Theme
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemColors
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 
@@ -25,7 +28,7 @@ fun BottomMenu(navController: NavController) {
         BottomMenuScreen.Sources
     )
 
-    NavigationBar(containerColor = colorResource(id = R.color.white), content = {
+    NavigationBar(containerColor = MaterialTheme.colorScheme.background, content = {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         menuItems.forEach {
@@ -33,11 +36,7 @@ fun BottomMenu(navController: NavController) {
                 selected = currentRoute == it.route,
                 icon = { Icon(imageVector = it.icon, contentDescription = it.title) },
                 alwaysShowLabel = true,
-                colors = NavigationBarItemDefaults.colors(
-                    unselectedTextColor = Color.Gray, // Set unselected text color
-                    selectedTextColor = Color.Black, // Set selected text color
-                    indicatorColor = Color.LightGray // Set indicator color
-                ),
+                colors = navBarItemColors(),
                 label = { Text(text = it.title)},
                         onClick = {
                     navController.navigate(it.route) {
@@ -53,6 +52,16 @@ fun BottomMenu(navController: NavController) {
             )
         }
     })
+}
+
+@Composable
+fun navBarItemColors() : NavigationBarItemColors {
+    return NavigationBarItemDefaults.colors(
+        unselectedIconColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+        selectedIconColor = MaterialTheme.colorScheme.primary,
+        unselectedTextColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+        selectedTextColor = MaterialTheme.colorScheme.primary,
+        indicatorColor = MaterialTheme.colorScheme.surfaceVariant)
 }
 
 @Preview(showBackground = true)
