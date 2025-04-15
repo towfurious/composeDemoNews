@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,10 +26,16 @@ import com.example.newsapp.R
 import com.example.newsapp.data.MockData
 import com.example.newsapp.data.MockData.getTimeAgo
 import com.example.newsapp.model.TopNewsArticle
+import com.example.newsapp.network.NewsManager
 import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
-fun TopNews(navController: NavController, articles: List<TopNewsArticle>) {
+fun TopNews(
+    navController: NavController,
+    articles: List<TopNewsArticle>,
+    query: MutableState<String>,
+    newsManager: NewsManager
+) {
     /*     Modifier.safeDrawingPadding()
            Modifier.systemBarsPadding()
      This snippet applies the safeDrawing window
@@ -39,13 +46,20 @@ fun TopNews(navController: NavController, articles: List<TopNewsArticle>) {
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Top News", fontWeight = FontWeight.SemiBold)
+        SearchBar(query = query, newsManager)
+        val searchedText = query.value
+        val resultList = mutableListOf<TopNewsArticle>()
+        if (searchedText != "") {
+            resultList.addAll(newsManager.searchedNewsResponse.value.articles ?: articles)
+        } else {
+            resultList.addAll(articles)
+        }
+
         LazyColumn {
-            items(articles.size) {
-                index ->
+            items(resultList.size) { index ->
                 TopNewsItem(
-                    article = articles[index],
-                    onNewsClick = { navController.navigate("DetailScreen/$index")}
+                    article = resultList[index],
+                    onNewsClick = { navController.navigate("DetailScreen/$index") }
                 )
             }
         }
@@ -54,12 +68,13 @@ fun TopNews(navController: NavController, articles: List<TopNewsArticle>) {
 
 @Composable
 fun TopNewsItem(article: TopNewsArticle, onNewsClick: () -> Unit = {}) {
-    Box(modifier = Modifier
-        .height(200.dp)
-        .padding(8.dp)
-        .clickable {
-            onNewsClick()
-        }) {
+    Box(
+        modifier = Modifier
+            .height(200.dp)
+            .padding(8.dp)
+            .clickable {
+                onNewsClick()
+            }) {
         CoilImage(
             imageModel = article.urlToImage,
             contentScale = ContentScale.Crop,
@@ -72,17 +87,20 @@ fun TopNewsItem(article: TopNewsArticle, onNewsClick: () -> Unit = {}) {
                 .padding(top = 16.dp, start = 16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            val date: String = MockData.stringToDate(article.publishedAt!!).getTimeAgo()
-            Text(
-                text = date,
-                color = Color.White,
-                fontWeight = FontWeight.SemiBold
-            )
+            article.publishedAt?.let {
+                Text(
+                    text = MockData.stringToDate(article.publishedAt).getTimeAgo(),
+                    color = Color.White,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
             Spacer(modifier = Modifier.height(80.dp))
-            Text(
-                text = article.title!!, color = Color.White,
-                fontWeight = FontWeight.Normal, maxLines = 2
-            )
+            article.title?.let {
+                Text(
+                    text = article.title, color = Color.White,
+                    fontWeight = FontWeight.Normal, maxLines = 2
+                )
+            }
         }
     }
 }

@@ -16,7 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.newsapp.components.BottomMenu
+import com.example.newsapp.ui.screen.BottomMenu
 import com.example.newsapp.model.TopNewsArticle
 import com.example.newsapp.ui.screen.BottomMenuScreen
 import com.example.newsapp.ui.screen.Categories
@@ -52,27 +52,33 @@ fun Navigation(
     newsManager: NewsManager = NewsManager(),
     paddingValues: PaddingValues
 ) {
-    val articles = newsManager.newsResponse.value.articles
+    val articles = mutableListOf(TopNewsArticle())
+    articles.addAll(newsManager.newsResponse.value.articles ?: listOf(TopNewsArticle()))
 
-    articles?.let {
-        NavHost(
-            navController = navHostController,
-            startDestination = BottomMenuScreen.TopNews.route,
-            modifier = Modifier.padding(paddingValues = paddingValues)
-        ) {
-            bottomNavigation(navHostController, articles, newsManager)
-            composable(
-                "DetailScreen/{index}",
-                arguments = listOf(navArgument("index") {
-                    type = NavType.IntType
-                })
-            )
-            { navBackStackEntry ->
-                val index = navBackStackEntry.arguments?.getInt("index")
-                index?.let {
-                    val acticle = articles[index]
-                    DetailScreen(acticle, scrollState = scrollState, navHostController)
+    NavHost(
+        navController = navHostController,
+        startDestination = BottomMenuScreen.TopNews.route,
+        modifier = Modifier.padding(paddingValues = paddingValues)
+    ) {
+        bottomNavigation(navHostController, articles, newsManager)
+        composable(
+            "DetailScreen/{index}",
+            arguments = listOf(navArgument("index") {
+                type = NavType.IntType
+            })
+        )
+        { navBackStackEntry ->
+            val index = navBackStackEntry.arguments?.getInt("index")
+            index?.let {
+                if (newsManager.query.value.isNotEmpty()) {
+                    articles.clear()
+                    articles.addAll(newsManager.searchedNewsResponse.value.articles ?: listOf())
+                } else {
+                    articles.clear()
+                    articles.addAll(newsManager.newsResponse.value.articles ?: listOf())
                 }
+                val article = articles[index]
+                DetailScreen(article, scrollState = scrollState, navHostController)
             }
         }
     }
@@ -83,7 +89,14 @@ fun NavGraphBuilder.bottomNavigation(
     articles: List<TopNewsArticle>,
     newsManager: NewsManager
 ) {
-    composable(BottomMenuScreen.TopNews.route) { TopNews(navController, articles) }
+    composable(BottomMenuScreen.TopNews.route) {
+        TopNews(
+            navController,
+            articles,
+            newsManager.query,
+            newsManager = newsManager
+        )
+    }
     composable(BottomMenuScreen.Categories.route) {
         newsManager.getArticlesByCategory("business")
         newsManager.onSelectedCategoryChanged("business")
@@ -93,7 +106,7 @@ fun NavGraphBuilder.bottomNavigation(
             newsManager.getArticlesByCategory(it)
         })
     }
-    composable(BottomMenuScreen.Sources.route) { Sources() }
+    composable(BottomMenuScreen.Sources.route) { Sources(newsManager) }
 }
 
 @Preview(showBackground = true)

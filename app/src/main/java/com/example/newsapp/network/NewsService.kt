@@ -18,4 +18,16 @@ interface NewsService {
         @Query("category") category: String,
         @Query("language") language: String
     ): Call<TopNewsResponse>
+
+    @GET("everything")
+    fun getArticlesBySources(
+        @Query("sources") source: String,
+        @Query("language") language: String
+    ): Call<TopNewsResponse>
+
+    @GET("everything")
+    fun getArticles(
+        @Query("q") query: String,
+        @Query("language") language: String
+    ): Call<TopNewsResponse>
 }
