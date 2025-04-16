@@ -1,5 +1,6 @@
 package com.example.newsapp.network
 
+import com.example.newsapp.BuildConfig
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.Interceptor
@@ -12,7 +13,6 @@ import java.util.concurrent.TimeUnit
 object Api {
     private const val BASE_URL = "https://newsapi.org/v2/"
     private const val API_KEY_HEADER = "X-Api-key"
-    private const val API_KEY = "2181d0791b0a46fda6c9448e2f4ef319"
 
     private val moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
@@ -25,7 +25,7 @@ object Api {
     private val apiKeyInterceptor = Interceptor { chain ->
         val originalRequest = chain.request()
         val newRequest = originalRequest.newBuilder()
-            .header(API_KEY_HEADER, API_KEY)
+            .header(API_KEY_HEADER, BuildConfig.NEWS_API_KEY)
             .build()
         chain.proceed(newRequest)
     }

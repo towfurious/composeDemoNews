@@ -4,22 +4,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.newsapp.network.NewsViewModel
 import com.example.newsapp.ui.NewsApp
 import com.example.newsapp.ui.theme.NewsAppTheme
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel by viewModels<NewsViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        viewModel.refreshAll()
         setContent {
             NewsAppTheme {
-                NewsApp()
+                NewsApp(viewModel)
             }
         }
     }
@@ -29,6 +32,6 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     NewsAppTheme {
-        NewsApp()
+        NewsApp(viewModel())
     }
 }

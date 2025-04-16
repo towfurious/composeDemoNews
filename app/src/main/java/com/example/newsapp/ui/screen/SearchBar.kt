@@ -16,7 +16,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -30,10 +29,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.newsapp.network.NewsManager
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.newsapp.network.Api
+import com.example.newsapp.network.NewsProvider
+import com.example.newsapp.network.NewsViewModel
 
 @Composable
-fun SearchBar(query: MutableState<String>, newsManager: NewsManager) {
+fun SearchBar(query: MutableState<String>, viewModel: NewsViewModel) {
     val localFocusManager = LocalFocusManager.current
     Card(
         elevation = CardDefaults.cardElevation(6.dp),
@@ -77,7 +79,7 @@ fun SearchBar(query: MutableState<String>, newsManager: NewsManager) {
                 keyboardActions = KeyboardActions(
                     onSearch = {
                         if (query.value != "") {
-                            newsManager.getSearchedArticles(query = query.value)
+                            viewModel.getSearchedArticles(query = query.value)
                         }
                         localFocusManager.clearFocus()
                     }
@@ -92,5 +94,5 @@ fun SearchBar(query: MutableState<String>, newsManager: NewsManager) {
 @Preview(showBackground = true)
 @Composable
 fun SearchPreview() {
-    SearchBar(query = mutableStateOf(""), NewsManager())
+    SearchBar(query = mutableStateOf(""), viewModel())
 }

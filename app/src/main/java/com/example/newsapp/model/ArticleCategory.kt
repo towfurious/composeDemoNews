@@ -10,7 +10,7 @@ import com.example.newsapp.model.ArticleCategory.TECHNOLOGY
 
 import com.example.newsapp.model.ArticleCategory.*
 
-enum class ArticleCategory(val CategoryName: String) {
+enum class ArticleCategory(val categoryName: String) {
     BUSINESS("business"),
     ENTERTAINMENT("entertainment"),
     GENERAL("general"),
@@ -24,7 +24,7 @@ fun getAllArticleCategories() : List<ArticleCategory> {
     return listOf(BUSINESS, ENTERTAINMENT, GENERAL, HEALTH, SCIENCE, SPORTS, TECHNOLOGY)
 }
 
-fun getArticleCategory(category: String) : ArticleCategory? {
-    val map = entries.associateBy(ArticleCategory::CategoryName)
+fun getArticleCategory(category: String): ArticleCategory? {
+    val map = entries.associateBy(ArticleCategory::categoryName)
     return map[category]
 }

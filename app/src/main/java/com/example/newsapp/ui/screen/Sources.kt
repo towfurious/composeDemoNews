@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,12 +45,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.newsapp.R
 import com.example.newsapp.model.TopNewsArticle
-import com.example.newsapp.network.NewsManager
+import com.example.newsapp.network.NewsProvider
+import com.example.newsapp.network.NewsViewModel
+import kotlinx.coroutines.flow.update
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Sources(newsManager: NewsManager) {
+fun Sources(newsViewModel: NewsViewModel) {
     val items = listOf(
         "TechCrunch" to "techcrunch",
         "TalkSport" to "talksport",
@@ -59,37 +62,48 @@ fun Sources(newsManager: NewsManager) {
     )
 
     Scaffold(topBar = {
-        TopAppBar(windowInsets = WindowInsets(0.dp), modifier = Modifier
-            .fillMaxWidth(), title = { Text(text = "${newsManager.sourceName.value.uppercase(Locale.getDefault())} Source") }, actions = {
-            var menuExpanded by remember { mutableStateOf(false) }
-            IconButton(onClick = { menuExpanded = true }) {
-                Icon(Icons.Default.MoreVert, contentDescription = null)
-            }
-            MaterialTheme(
-                shapes = MaterialTheme.shapes.copy(
-                    medium = RoundedCornerShape(16.dp)
+        TopAppBar(
+            windowInsets = WindowInsets(0.dp),
+            modifier = Modifier
+                .fillMaxWidth(),
+            title = {
+                Text(
+                    text = "${
+                        newsViewModel.sourceName.collectAsState().value.uppercase(Locale.getDefault())
+                    } Source"
                 )
-            ) {
-                DropdownMenu(
-                    expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
-                    items.forEach {
-                        DropdownMenuItem(text = {Text(text = it.first)}, onClick = {
-                            newsManager.sourceName.value = it.second
-                            menuExpanded = false
-                        })
+            },
+            actions = {
+                var menuExpanded by remember { mutableStateOf(false) }
+                IconButton(onClick = { menuExpanded = true }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = null)
+                }
+                MaterialTheme(
+                    shapes = MaterialTheme.shapes.copy(
+                        medium = RoundedCornerShape(16.dp)
+                    )
+                ) {
+                    DropdownMenu(
+                        expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
+                        items.forEach {
+                            DropdownMenuItem(text = { Text(text = it.first) }, onClick = {
+                                newsViewModel.sourceName.value = it.second
+                                newsViewModel.getArticlesBySource()
+                                menuExpanded = false
+                            })
+                        }
                     }
                 }
-            }
-        })
+            })
     }) { paddingValues ->
-        newsManager.getArticlesBySource()
-        val articles = newsManager.getArticleBySource.value
-        SourceContent(paddingValues, articles = articles.articles?: listOf())
+        newsViewModel.getArticlesBySource()
+        val articles = newsViewModel.articleBySource.collectAsState().value.articles
+        SourceContent(paddingValues, articles = articles ?: emptyList())
     }
 }
 
 @Composable
-fun SourceContent(paddingValues: PaddingValues, articles: List<TopNewsArticle> ) {
+fun SourceContent(paddingValues: PaddingValues, articles: List<TopNewsArticle>) {
     val uriHandler = LocalUriHandler.current
 
     LazyColumn(contentPadding = paddingValues) {
@@ -130,22 +144,25 @@ fun SourceContent(paddingValues: PaddingValues, articles: List<TopNewsArticle> )
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Card(colors = CardDefaults.cardColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Black
-                    ), content = {
-                        Text(annotatedString, Modifier.clickable {
-                            annotatedString.getStringAnnotations(
-                                tag = "URL",
-                                start = 0,
-                                end = annotatedString.length
-                            ).firstOrNull()?.let { result ->
-                                if (result.tag == "URL") {
-                                    uriHandler.openUri(result.item)
+                    Card(
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Black
+                        ), content = {
+                            Text(annotatedString, Modifier
+                                .clickable {
+                                    annotatedString.getStringAnnotations(
+                                        tag = "URL",
+                                        start = 0,
+                                        end = annotatedString.length
+                                    ).firstOrNull()?.let { result ->
+                                        if (result.tag == "URL") {
+                                            uriHandler.openUri(result.item)
+                                        }
+                                    }
                                 }
-                            }
-                        }.padding(8.dp))
-                    })
+                                .padding(8.dp))
+                        })
                 }
             })
         }
