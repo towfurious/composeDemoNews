@@ -1,22 +1,22 @@
 package com.example.newsapp.network
 
-import android.app.Application
-import androidx.collection.intFloatMapOf
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newsapp.MainApp
 import com.example.newsapp.model.ArticleCategory
 import com.example.newsapp.model.TopNewsResponse
 import com.example.newsapp.model.getArticleCategory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NewsViewModel(application: Application): AndroidViewModel(application) {
-    private val newsProvider = getApplication<MainApp>().provider
+@HiltViewModel
+class NewsViewModel @Inject constructor(
+    private val repository: NewsRepository) : ViewModel() {
 
     private val _newsResponse = MutableStateFlow(TopNewsResponse())
     val newsResponse: StateFlow<TopNewsResponse> = _newsResponse.asStateFlow()
@@ -52,7 +52,7 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     fun refreshAll() {
         _isLoading.update { true }
         viewModelScope.launch(errorHandler) {
-            _newsResponse.update { newsProvider.getArticles() }
+            _newsResponse.update { repository.getArticles() }
             _isLoading.update { false }
         }
     }
@@ -60,7 +60,7 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     fun getArticlesByCategory(category: String) {
         _isLoading.update { true }
         viewModelScope.launch(errorHandler) {
-            val response = newsProvider.getArticlesByCategory(category = category)
+            val response = repository.getArticlesByCategory(category = category)
             _articleByCategory.update { response }
             _isLoading.update { false }
         }
@@ -69,7 +69,7 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     fun getArticlesBySource() {
         _isLoading.update { true }
         viewModelScope.launch(errorHandler) {
-            val response = newsProvider.getArticlesBySources(sources = sourceName.value)
+            val response = repository.getArticlesBySources(sources = sourceName.value)
             _articleBySource.update { response }
             _isLoading.update { false }
         }
@@ -78,7 +78,7 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     fun getSearchedArticles(query: String) {
         _isLoading.update { true }
         viewModelScope.launch(errorHandler) {
-        val response = newsProvider.getSearchedArticles(query = query)
+        val response = repository.getSearchedArticles(query = query)
             _searchedNewsResponse.update { response }
             _isLoading.update { false }
         }

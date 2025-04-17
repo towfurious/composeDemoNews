@@ -46,9 +46,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.example.newsapp.R
 import com.example.newsapp.model.TopNewsArticle
-import com.example.newsapp.network.NewsProvider
 import com.example.newsapp.network.NewsViewModel
-import kotlinx.coroutines.flow.update
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)

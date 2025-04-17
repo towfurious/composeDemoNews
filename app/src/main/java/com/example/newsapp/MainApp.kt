@@ -1,12 +1,7 @@
 package com.example.newsapp
 
 import android.app.Application
-import com.example.newsapp.network.Api
-import com.example.newsapp.network.NewsProvider
+import dagger.hilt.android.HiltAndroidApp
 
-class MainApp: Application() {
-
-    val provider by lazy {
-        NewsProvider(Api.retrofitService)
-    }
-}
+@HiltAndroidApp
+class MainApp: Application()

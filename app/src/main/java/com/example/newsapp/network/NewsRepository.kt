@@ -5,20 +5,20 @@ import androidx.compose.runtime.mutableStateOf
 import com.example.newsapp.model.ArticleCategory
 import com.example.newsapp.model.TopNewsResponse
 import com.example.newsapp.model.getArticleCategory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class NewsProvider(
-    private val service: NewsService,
+class NewsRepository @Inject constructor(private val service: NewsService) {
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-) {
     private val selectedCategory: MutableState<ArticleCategory?> = mutableStateOf(null)
 
     suspend fun getArticles(countryCode: String = "us"): TopNewsResponse =
         withContext(ioDispatcher) {
-        service.getTopArticles(countryCode)
-    }
+            service.getTopArticles(countryCode)
+        }
 
     suspend fun getArticlesByCategory(category: String): TopNewsResponse =
         withContext(ioDispatcher) {
@@ -34,7 +34,7 @@ class NewsProvider(
             )
         }
 
-    suspend fun getSearchedArticles(query: String) : TopNewsResponse =
+    suspend fun getSearchedArticles(query: String): TopNewsResponse =
         withContext(ioDispatcher) {
             service.getArticles(
                 query = query
