@@ -1,12 +1,14 @@
 package com.example.newsapp.network
 
 import android.app.Application
+import androidx.collection.intFloatMapOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newsapp.MainApp
 import com.example.newsapp.model.ArticleCategory
 import com.example.newsapp.model.TopNewsResponse
 import com.example.newsapp.model.getArticleCategory
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,43 +40,48 @@ class NewsViewModel(application: Application): AndroidViewModel(application) {
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error.asStateFlow()
+    private val _error = MutableStateFlow<Boolean>(false)
+    val error: StateFlow<Boolean> = _error.asStateFlow()
+
+    private val errorHandler = CoroutineExceptionHandler { _, error ->
+        if (error is Exception) {
+            _error.update { true }
+        }
+    }
 
     fun refreshAll() {
         _isLoading.update { true }
-        viewModelScope.launch {
+        viewModelScope.launch(errorHandler) {
             _newsResponse.update { newsProvider.getArticles() }
+            _isLoading.update { false }
         }
-        _isLoading.update { false }
     }
 
     fun getArticlesByCategory(category: String) {
         _isLoading.update { true }
-        viewModelScope.launch {
+        viewModelScope.launch(errorHandler) {
             val response = newsProvider.getArticlesByCategory(category = category)
             _articleByCategory.update { response }
+            _isLoading.update { false }
         }
-        _isLoading.update { false }
     }
 
     fun getArticlesBySource() {
         _isLoading.update { true }
-        viewModelScope.launch {
+        viewModelScope.launch(errorHandler) {
             val response = newsProvider.getArticlesBySources(sources = sourceName.value)
             _articleBySource.update { response }
+            _isLoading.update { false }
         }
-        _isLoading.update { false }
     }
 
     fun getSearchedArticles(query: String) {
         _isLoading.update { true }
-        viewModelScope.launch {
-
+        viewModelScope.launch(errorHandler) {
         val response = newsProvider.getSearchedArticles(query = query)
             _searchedNewsResponse.update { response }
-        }
             _isLoading.update { false }
+        }
     }
 
     fun onSelectedCategoryChanged(category: String) {

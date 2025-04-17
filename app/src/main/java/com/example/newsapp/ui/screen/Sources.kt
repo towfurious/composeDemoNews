@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +53,11 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Sources(newsViewModel: NewsViewModel) {
+fun Sources(
+    newsViewModel: NewsViewModel,
+    isLoading: MutableState<Boolean>,
+    isError: MutableState<Boolean>
+) {
     val items = listOf(
         "TechCrunch" to "techcrunch",
         "TalkSport" to "talksport",
@@ -96,9 +101,19 @@ fun Sources(newsViewModel: NewsViewModel) {
                 }
             })
     }) { paddingValues ->
-        newsViewModel.getArticlesBySource()
-        val articles = newsViewModel.articleBySource.collectAsState().value.articles
-        SourceContent(paddingValues, articles = articles ?: emptyList())
+        when {
+            isLoading.value -> {
+                LoadingUI()
+            }
+            isError.value -> {
+                ErrorUI()
+            }
+            else -> {
+                newsViewModel.getArticlesBySource()
+                val articles = newsViewModel.articleBySource.collectAsState().value.articles
+                SourceContent(paddingValues, articles = articles ?: emptyList())
+            }
+        }
     }
 }
 

@@ -35,7 +35,9 @@ fun TopNews(
     navController: NavController,
     articles: List<TopNewsArticle>,
     query: MutableState<String>,
-    viewModel: NewsViewModel
+    viewModel: NewsViewModel,
+    isLoading: MutableState<Boolean>,
+    isError: MutableState<Boolean>
 ) {
     /*     Modifier.safeDrawingPadding()
            Modifier.systemBarsPadding()
@@ -56,12 +58,24 @@ fun TopNews(
             resultList.addAll(articles)
         }
 
-        LazyColumn {
-            items(resultList.size) { index ->
-                TopNewsItem(
-                    article = resultList[index],
-                    onNewsClick = { navController.navigate("DetailScreen/$index") }
-                )
+        when {
+            isLoading.value -> {
+                LoadingUI()
+            }
+
+            isError.value -> {
+                ErrorUI()
+            }
+
+            else -> {
+                LazyColumn {
+                    items(resultList.size) { index ->
+                        TopNewsItem(
+                            article = resultList[index],
+                            onNewsClick = { navController.navigate("DetailScreen/$index") }
+                        )
+                    }
+                }
             }
         }
     }

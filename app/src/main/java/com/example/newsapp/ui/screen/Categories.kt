@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,19 +35,30 @@ import com.example.newsapp.network.NewsViewModel
 import com.skydoves.landscapist.coil.CoilImage
 
 @Composable
-fun Categories(onFetchCategory: (String) -> Unit = {}, newsViewModel: NewsViewModel) {
+fun Categories(onFetchCategory: (String) -> Unit = {}, newsViewModel: NewsViewModel,
+               isLoading: MutableState<Boolean>, isError: MutableState<Boolean>) {
     val tabsItems = getAllArticleCategories()
     val isSelected = newsViewModel.selectedCategory.collectAsState().value
     val articles = newsViewModel.articleByCategory.collectAsState().value
     Column {
-        LazyRow {
-            items(tabsItems.size) {
-                val category = tabsItems[it]
-                CategoryTab(
-                    category = category.categoryName,
-                    onFetchCategory = onFetchCategory,
-                    isSelected = isSelected == category
-                )
+        when {
+            isLoading.value -> {
+                LoadingUI()
+            }
+            isError.value -> {
+                ErrorUI()
+            }
+            else -> {
+                LazyRow {
+                    items(tabsItems.size) {
+                        val category = tabsItems[it]
+                        CategoryTab(
+                            category = category.categoryName,
+                            onFetchCategory = onFetchCategory,
+                            isSelected = isSelected == category
+                        )
+                    }
+                }
             }
         }
         ArticleContent(articles = articles.articles ?: listOf())
@@ -83,9 +95,7 @@ fun ArticleContent(articles: List<TopNewsArticle>, modifier: Modifier = Modifier
             article ->
             Card(modifier.padding(8.dp), border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.primary))
             {
-                Row(modifier
-                    .fillMaxWidth()
-                    .padding()) {
+                Row(modifier.fillMaxWidth()) {
                     CoilImage(
                         imageModel = article.urlToImage,
                         modifier = Modifier.size(100.dp),
@@ -97,9 +107,9 @@ fun ArticleContent(articles: List<TopNewsArticle>, modifier: Modifier = Modifier
                             fontWeight = FontWeight.Bold,
                             maxLines = 3, overflow = TextOverflow.Ellipsis)
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(text = article.author ?: "not available")
+                            Text(text = article.author ?: "not available", maxLines = 1)
                             Text(text = MockData.stringToDate(
-                                article.publishedAt ?: "2021-11-10T14:25:20Z").getTimeAgo())
+                                article.publishedAt ?: "2021-11-10T14:25:20Z").getTimeAgo(), maxLines = 1)
                         }
                     }
                 }
