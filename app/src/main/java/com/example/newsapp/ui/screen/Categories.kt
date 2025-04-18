@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.newsapp.R
-import com.example.newsapp.data.MockData
-import com.example.newsapp.data.MockData.getTimeAgo
+import com.example.newsapp.util.DateUtil
+import com.example.newsapp.util.DateUtil.getTimeAgo
 import com.example.newsapp.model.TopNewsArticle
 import com.example.newsapp.model.getAllArticleCategories
 import com.example.newsapp.network.NewsViewModel
@@ -108,7 +108,7 @@ fun ArticleContent(articles: List<TopNewsArticle>, modifier: Modifier = Modifier
                             maxLines = 3, overflow = TextOverflow.Ellipsis)
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text(text = article.author ?: "not available", maxLines = 1)
-                            Text(text = MockData.stringToDate(
+                            Text(text = DateUtil.stringToDate(
                                 article.publishedAt ?: "2021-11-10T14:25:20Z").getTimeAgo(), maxLines = 1)
                         }
                     }

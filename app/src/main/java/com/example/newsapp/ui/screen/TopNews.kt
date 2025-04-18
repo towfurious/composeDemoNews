@@ -24,8 +24,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.newsapp.R
-import com.example.newsapp.data.MockData
-import com.example.newsapp.data.MockData.getTimeAgo
+import com.example.newsapp.util.DateUtil
+import com.example.newsapp.util.DateUtil.getTimeAgo
 import com.example.newsapp.model.TopNewsArticle
 import com.example.newsapp.network.NewsViewModel
 import com.skydoves.landscapist.coil.CoilImage
@@ -104,7 +104,7 @@ fun TopNewsItem(article: TopNewsArticle, onNewsClick: () -> Unit = {}) {
         ) {
             article.publishedAt?.let {
                 Text(
-                    text = MockData.stringToDate(article.publishedAt).getTimeAgo(),
+                    text = DateUtil.stringToDate(article.publishedAt).getTimeAgo(),
                     color = Color.White,
                     fontWeight = FontWeight.SemiBold
                 )

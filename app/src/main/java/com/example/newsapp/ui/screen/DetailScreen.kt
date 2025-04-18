@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.newsapp.R
-import com.example.newsapp.data.MockData
-import com.example.newsapp.data.MockData.getTimeAgo
+import com.example.newsapp.util.DateUtil
+import com.example.newsapp.util.DateUtil.getTimeAgo
 import com.example.newsapp.model.TopNewsArticle
 import com.skydoves.landscapist.coil.CoilImage
 
@@ -83,7 +83,7 @@ fun DetailsScreenContent(
             InfoWithIcon(Icons.Default.Edit, info = article.author ?: "Not Available")
             InfoWithIcon(
                 icon = Icons.Default.Edit,
-                info = MockData.stringToDate(article.publishedAt!!).getTimeAgo()
+                info = DateUtil.stringToDate(article.publishedAt!!).getTimeAgo()
             )
         }
         Text(text = article.title ?: "Not Available", fontWeight = FontWeight.Bold)
