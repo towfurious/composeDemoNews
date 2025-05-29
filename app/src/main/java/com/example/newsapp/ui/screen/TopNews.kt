@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.newsapp.R
@@ -118,4 +119,16 @@ fun TopNewsItem(article: TopNewsArticle, onNewsClick: () -> Unit = {}) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun TopNewsItemPreview() {
+    val article = TopNewsArticle(
+        author = "Namita Singh",
+        title = "Cleo Smith news — live: Kidnap suspect 'in hospital again' as 'hard police grind' credited for breakthrough - The Independent",
+        description = "The suspected kidnapper of four-year-old Cleo Smith has been treated in hospital for a second time amid reports he was “attacked” while in custody.",
+        publishedAt = "2021-11-04T04:42:40Z"
+    )
+    TopNewsItem(article)
 }

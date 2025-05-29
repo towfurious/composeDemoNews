@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -33,7 +34,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.newsapp.network.NewsViewModel
 
 @Composable
-fun SearchBar(query: MutableState<String>, viewModel: NewsViewModel) {
+fun SearchBar(
+    query: MutableState<String>,
+    viewModel: NewsViewModel? = null
+) {
     val localFocusManager = LocalFocusManager.current
     Card(
         elevation = CardDefaults.cardElevation(6.dp),
@@ -47,12 +51,10 @@ fun SearchBar(query: MutableState<String>, viewModel: NewsViewModel) {
             .padding(8.dp),
         content = {
             TextField(
-                value = query.value, onValueChange = {
-                    query.value = it
-                }, modifier = Modifier.fillMaxWidth(),
-                label = {
-                    Text(text = "Search")
-                },
+                value = query.value,
+                onValueChange = { query.value = it },
+                modifier = Modifier.fillMaxWidth().testTag("search"),
+                label = { Text(text = "Search") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Search
@@ -60,37 +62,38 @@ fun SearchBar(query: MutableState<String>, viewModel: NewsViewModel) {
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Search,
-                        contentDescription = ""
+                        contentDescription = null
                     )
                 },
                 trailingIcon = {
-                    if (query.value != "") {
+                    if (query.value.isNotEmpty()) {
                         IconButton(onClick = { query.value = "" }) {
                             Icon(
                                 imageVector = Icons.Default.Close,
-                                contentDescription = "",
-                                tint = Color.White)
+                                contentDescription = null,
+                                tint = Color.White
+                            )
                         }
                     }
                 },
                 textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
                 keyboardActions = KeyboardActions(
                     onSearch = {
-                        if (query.value != "") {
-                            viewModel.getSearchedArticles(query = query.value)
+                        if (query.value.isNotEmpty()) {
+                            viewModel?.getSearchedArticles(query.value)
                         }
                         localFocusManager.clearFocus()
                     }
                 ),
                 colors = TextFieldDefaults.colors()
-
             )
-        })
+        }
+    )
 }
 
 @SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
 fun SearchPreview() {
-    SearchBar(query = mutableStateOf(""), viewModel())
+    SearchBar(query = mutableStateOf(""))
 }

@@ -20,6 +20,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -72,6 +73,7 @@ fun CategoryTab(category: String, isSelected: Boolean = false,
         Surface (
             modifier = Modifier
                 .padding(horizontal = 4.dp, vertical = 16.dp)
+                .testTag("categorySurface")
                 .clickable {
                     onFetchCategory(category)
                 },
@@ -82,7 +84,7 @@ fun CategoryTab(category: String, isSelected: Boolean = false,
                     text = category,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.White,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(8.dp).testTag("category")
                 )
             }
         )
@@ -131,4 +133,10 @@ fun ArticleContentPreview() {
             )
         )
     )
+}
+
+@Preview
+@Composable
+fun CategoryTabPreview() {
+    CategoryTab(category = "Sport", isSelected = true) { }
 }

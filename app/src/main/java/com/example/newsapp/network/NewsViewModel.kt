@@ -78,7 +78,7 @@ class NewsViewModel @Inject constructor(
     fun getSearchedArticles(query: String) {
         _isLoading.update { true }
         viewModelScope.launch(errorHandler) {
-        val response = repository.getSearchedArticles(query = query)
+            val response = repository.getSearchedArticles(query = query)
             _searchedNewsResponse.update { response }
             _isLoading.update { false }
         }

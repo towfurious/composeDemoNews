@@ -19,6 +19,9 @@
       <SelectionState runConfigName="ArticleContentPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="searchField_acceptsTextAndTriggersSearch()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

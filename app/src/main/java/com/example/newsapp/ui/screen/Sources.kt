@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -43,6 +45,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.newsapp.R
 import com.example.newsapp.model.TopNewsArticle
@@ -149,13 +152,16 @@ fun SourceContent(paddingValues: PaddingValues, articles: List<TopNewsArticle>) 
                         text = article.title ?: "Not Available",
                         fontWeight = FontWeight.Bold,
                         maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.testTag("sourcesArticleTitle")
                     )
 
                     Text(
                         text = article.description ?: "Not Available",
                         maxLines = 3,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.testTag("sourcesArticleText")
+
                     )
                     Card(
                         colors = CardDefaults.cardColors(
@@ -174,10 +180,25 @@ fun SourceContent(paddingValues: PaddingValues, articles: List<TopNewsArticle>) 
                                         }
                                     }
                                 }
-                                .padding(8.dp))
+                                .padding(8.dp)
+                                .testTag("sourcesArticleLink"))
+
                         })
                 }
             })
         }
     }
+}
+
+@Preview
+@Composable
+fun SourceContentPreview() {
+    val paddingValues: PaddingValues = PaddingValues()
+    val articles = listOf(TopNewsArticle(
+        author = "Namita Singh",
+        title = "Cleo Smith news — live: Kidnap suspect 'in hospital again' as 'hard police grind' credited for breakthrough - The Independent",
+        description = "The suspected kidnapper of four-year-old Cleo Smith has been treated in hospital for a second time amid reports he was “attacked” while in custody.",
+        publishedAt = "2021-11-04T04:42:40Z"
+    ))
+    SourceContent(paddingValues, articles)
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
@@ -86,10 +87,16 @@ fun DetailsScreenContent(
                 info = DateUtil.stringToDate(article.publishedAt!!).getTimeAgo()
             )
         }
-        Text(text = article.title ?: "Not Available", fontWeight = FontWeight.Bold)
+        Text(
+            text = article.title ?: "Not Available",
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.testTag("detailsScreenTitle").padding(2.dp)
+        )
         Text(
             text = article.description ?: "Not Available",
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .testTag("detailsScreenDescription")
         )
     }
 }
