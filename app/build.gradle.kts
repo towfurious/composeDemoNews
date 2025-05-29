@@ -48,6 +48,7 @@ android {
 
 dependencies {
     implementation(libs.hilt.android)
+    implementation(libs.androidx.junit.ktx)
     ksp(libs.hilt.compiler)
     implementation(libs.logging.interceptor)
     implementation(libs.landscapist.coil)
